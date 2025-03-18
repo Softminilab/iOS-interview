@@ -258,3 +258,18 @@ Core Data是iOS数据持久化的核心框架，涉及数据建模、关系处�
 - 如何减少应用的二进制文件大小？
   - 启用Bitcode，移除调试符号，优化图片压缩，管理依赖避免包含多余库，清理未用代码减少体积。 
 
+
+
+✔️ 使用 Runtime 就行埋单统计
+✔️ 使用 RunLoop 对项目进行卡顿检查，内存泄漏检测
+✔️ 使用LLVM埋点，对app进行二进制重排
+✔️ 熟练使用shell来处理符号表冲突问题
+✔️ 熟练使用shell来处理符号表冲突问题
+✔️ 熟练使用数据库 FMDB,Realm,SQLite,Core data
+✔️ NSURLProtocol
+✔️ 熟练掌握Runtime,Runlop底层原理以及底层源码分析
+✔️ 熟练掌握 KVC，KVO 使用及其底层原理
+✔️ 熟练掌握多线程原理以及 NSThread，NSOperation 使用
+✔️ 熟练掌握 GCD高级使用以及 GCD 源码分析
+✔️ 熟练使用设计模式
+✔️ 熟练使用流行的架构模式
