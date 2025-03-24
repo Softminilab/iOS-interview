@@ -206,20 +206,122 @@ Core Data是iOS数据持久化的核心框架，涉及数据建模、关系处�
     - 视图：UI组件。  
     - 控制器：管理模型和视图交互。
       iOS中，视图控制器常为控制器，模型为自定义类，视图为UIKit组件。
-- 解释MVVM, MVC, MVP, VIPER模式及其优势。(未完)
+  
+- 解释MVVM, MVC, MVP, VIPER模式及其优势。
+
+  ## MVC (Model-View-Controller)
+
+  **原理**：将应用分为数据层(Model)、界面层(View)和控制层(Controller)。
+
+  **实现方式**：
+
+  - Model：负责数据逻辑
+  - View：负责界面展示
+  - Controller：协调Model和View，处理用户输入
+
+  **优势**：
+
+  - 最简单直观，上手门槛低
+  - Apple框架原生支持此模式
+  - 适合小型应用快速开发
+
+  **缺点**：
+
+  - 在iOS实现中，Controller往往变得臃肿(被称为"Massive View Controller")
+  - 测试性较差，Controller与View耦合度高
+  - 代码复用性低
+
+  ## MVP (Model-View-Presenter)
+
+  **原理**：MVC的变种，用Presenter替代Controller，强化了视图与逻辑的分离。
+
+  **实现方式**：
+
+  - Model：处理数据逻辑
+  - View：负责界面展示，但比MVC更被动
+  - Presenter：包含所有UI逻辑，但不直接访问View属性
+
+  **优势**：
+
+  - View与Model完全解耦
+  - UI逻辑集中在Presenter，更易测试
+  - 解决了MVC中Controller臃肿问题
+
+  **缺点**：
+
+  - 比MVC更复杂，需要更多代码
+  - Presenter与View通过接口交互，代码量增加
+  - 需要手动建立View和Presenter的联系
+
+  ## MVVM (Model-View-ViewModel)
+
+  **原理**：引入ViewModel层，通过数据绑定机制实现View和Model的自动同步。
+
+  **实现方式**：
+
+  - Model：负责数据逻辑
+  - View：负责界面展示，被动接收ViewModel的变化
+  - ViewModel：转换Model数据为View可用格式，处理View事件
+
+  **优势**：
+
+  - 优秀的数据绑定机制，特别配合SwiftUI和Combine使用
+  - 高度可测试性，ViewModel与UI无关
+  - View与Model彻底分离，减少代码耦合
+
+  **缺点**：
+
+  - 需要数据绑定机制支持(RxSwift/Combine)才能发挥优势
+  - 对于简单界面可能是过度设计
+  - 理解数据流向需要一定学习曲线
+
+  ## VIPER (View-Interactor-Presenter-Entity-Router)
+
+  **原理**：更彻底的关注点分离，遵循单一职责原则的模块化架构。
+
+  **实现方式**：
+
+  - View：纯UI展示，无业务逻辑
+  - Interactor：包含业务逻辑，操作Entity
+  - Presenter：处理UI事件，格式化数据给View
+  - Entity：纯数据模型
+  - Router：负责页面导航和模块组装
+
+  **优势**：
+
+  - 极高的可测试性
+  - 严格的关注点分离，适合大型应用
+  - 模块化程度高，便于团队协作
+  - 单一职责原则减少代码耦合
+
+  **缺点**：
+
+  - 学习曲线陡峭，上手难度大
+  - 代码量显著增加，简单功能也需复杂结构
+  - 开发速度较慢，适合长期维护项目
+
+  ## 选择建议
+
+  - 小型项目：MVC足够简单有效
+  - 中型项目：MVVM平衡了复杂性和可维护性
+  - 大型项目：VIPER提供最佳的长期可维护性
+  - 团队熟悉度：选择团队最熟悉的架构往往比理论上最佳的架构更实用
+
+  对于现代iOS开发，MVVM与SwiftUI+Combine组合是当前流行趋势，提供了良好的响应式编程体验。
+
 - 何时使用单例模式（Singleton），提供一个示例？
   - 使用场景：全局访问共享资源，如设置管理。
+
 - 解释观察者模式及其在iOS框架中的应用。  
   - 观察者模式：对象间一对多依赖，状态变化通知观察者。
     iOS应用：如NSNotificationCenter广播通知，KVO监控属性变化。
     示例：用通知中心监听事件，解耦组件。  
+
 - iOS开发中常用的其他设计模式有哪些？  (未完)
   - 工厂模式：创建对象，如UICollectionViewCell工厂。  
   - 适配器模式：适配不同接口，如第三方库适配。  
   - 策略模式：定义算法族，如排序策略切换。  
   - 装饰器模式：动态添加功能，如视图装饰。
-- 设计模式有哪些？
-- 常见设计模式对比
 
 #### 应用生命周期
 
@@ -260,16 +362,9 @@ Core Data是iOS数据持久化的核心框架，涉及数据建模、关系处�
 
 
 
-✔️ 使用 Runtime 就行埋单统计
-✔️ 使用 RunLoop 对项目进行卡顿检查，内存泄漏检测
-✔️ 使用LLVM埋点，对app进行二进制重排
-✔️ 熟练使用shell来处理符号表冲突问题
-✔️ 熟练使用shell来处理符号表冲突问题
-✔️ 熟练使用数据库 FMDB,Realm,SQLite,Core data
-✔️ NSURLProtocol
-✔️ 熟练掌握Runtime,Runlop底层原理以及底层源码分析
-✔️ 熟练掌握 KVC，KVO 使用及其底层原理
-✔️ 熟练掌握多线程原理以及 NSThread，NSOperation 使用
-✔️ 熟练掌握 GCD高级使用以及 GCD 源码分析
-✔️ 熟练使用设计模式
-✔️ 熟练使用流行的架构模式
+
+
+---------------
+
+
+
