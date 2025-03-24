@@ -1,5 +1,30 @@
 # 使用Shell处理符号前缀添加的关键步骤
 
+### 实际例子
+
+如果遇到两个库都定义了相同函数名`parseJSON`的情况：
+
+```
+bash
+
+Copy
+
+# 首先，找出冲突的符号
+nm -gU libA.a libB.a | grep "_parseJSON" | sort
+
+# 创建一个包含需要重命名符号的文件
+echo "_parseJSON _libA_parseJSON" > rename_list.txt
+
+# 使用ld的-alias_list选项重命名
+OTHER_LDFLAGS="-Xlinker -alias_list -Xlinker rename_list.txt"
+```
+
+这样就把libA中的`parseJSON`函数重命名为`libA_parseJSON`，解决了冲突。
+
+这种方法类似于CocoaPods在处理冲突时的机制，它通常会为每个库添加一个唯一的前缀来防止冲突。
+
+
+
 ## 1. 符号识别阶段
 
 **关键思路**：
