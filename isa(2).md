@@ -113,14 +113,14 @@
         MyObjectClass -- isa --> MyObjectMetaclass;
         NSObjectClass -- isa --> NSObjectMetaclass;
     
-        MyObjectMetaclass -- isa --> NSObjectMetaclass; // All metaclasses' isa point to root metaclass
-        NSObjectMetaclass -- isa --> NSObjectClass;     // Root metaclass's isa points to root class
+        MyObjectMetaclass -- isa --> NSObjectMetaclass;
+        NSObjectMetaclass -- isa --> NSObjectClass;    
     
         MyObjectClass -- superclass --> NSObjectClass;
-        NSObjectClass -- superclass --> nil; // Root class's superclass is nil
+        NSObjectClass -- superclass --> nil; 
     
-        MyObjectMetaclass -- superclass --> NSObjectMetaclass; // Metaclass hierarchy mirrors class hierarchy
-        NSObjectMetaclass -- superclass --> NSObjectClass;     // Root metaclass's superclass is root class (NSObject)
+        MyObjectMetaclass -- superclass --> NSObjectMetaclass;
+        NSObjectMetaclass -- superclass --> NSObjectClass;    
     ```
 
 **6. Non-Pointer `isa` (现代 `isa`)**
