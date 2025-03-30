@@ -1134,3 +1134,26 @@ AutoreleasePool是iOS/macOS内存管理中的核心机制，它通过延迟对�
 ## 为什么要在主线程更新UI？
 
 因为UI框架（如UIKit/AppKit）本身**不是线程安全的**，强制在主线程更新可以避免数据竞争、UI错乱和崩溃。
+
+
+
+## 简述 Autoreleasepool
+
+好的，简述一下 Autoreleasepool（自动释放池）：
+
+**Autoreleasepool 是 Objective-C (以及 Swift 与 Objective-C 交互时) 中一种内存管理机制，用于延迟对象的释放。**
+
+核心思想是：
+
+1.  **延迟释放：** 当你向一个对象发送 `autorelease` 消息时，它并不会立即被 `release`。相反，它被添加到一个当前活跃的 Autoreleasepool 中。
+2.  **池管理对象：** 这个 Autoreleasepool 会“持有”所有被加入的对象。
+3.  **稍后释放：** 当 Autoreleasepool 本身被**排干 (drain)** 或销毁时，它会向池中的**所有**对象发送 `release` 消息。
+4.  **释放时机：**
+    *   在主线程或有 RunLoop 的线程上，系统通常在**每个事件循环结束时**自动创建和排干 Autoreleasepool。
+    *   开发者可以手动创建 `@autoreleasepool { ... }` 块，该池会在**代码执行离开这个块时**被排干。
+
+**主要目的：**
+
+*   管理那些需要在**当前方法调用结束后**仍然存活一段时间，但最终应该被释放的对象的生命周期（尤其是在 MRC 时代常见于便利构造器返回的对象）。
+*   在 ARC 下，虽然编译器处理了大部分 `retain/release/autorelease`，但在循环中创建大量临时对象或在没有默认 Autoreleasepool 的线程（如某些后台任务）中，显式使用 `@autoreleasepool` 可以**防止内存峰值过高**，并确保对象及时清理。
+
