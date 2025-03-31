@@ -50,13 +50,13 @@
 graph TD
     subgraph UI Layer
         ConvListVC[ConversationListView]
-        ChatVC[ChatView (TableView/CollectionView)]
+        ChatVC["ChatView (TableView/CollectionView)"] %% <--- 使用双引号包裹文本
         InputBar[Input Toolbar]
         ContactVC[ContactListView]
         OtherUI[Other UI Components]
     end
 
-    subgraph Presentation Layer (MVVM Example)
+    subgraph Presentation Layer
         ConvListVM[ConversationListViewModel]
         ChatVM[ChatViewModel]
         ContactVM[ContactViewModel]
@@ -79,15 +79,15 @@ graph TD
 
     subgraph Network Layer
         WebSocket[WebSocket/MQTT Client]
-        ApiClient[API Client (URLSession)]
+        ApiClient["API Client (URLSession)"]
     end
 
     subgraph Core/Utility Layer
         Models[Data Models]
-        Utils[Utilities (Crypto, Log, etc.)]
+        Utils["Utilities (Crypto, Log, etc.)"]
     end
 
-    %% Dependencies %%
+    %% Dependencies (UI -> Presentation -> Service) %%
     ConvListVC --> ConvListVM;
     ChatVC --> ChatVM;
     InputBar --> ChatVM;
@@ -96,24 +96,40 @@ graph TD
     ConvListVM --> ConvMgr;
     ConvListVM --> UserMgr;
     ChatVM --> MsgMgr;
-    ChatVM --> ConnMgr;
-    ChatVM --> UserMgr;
+    ChatVM --> ConnMgr; %% ChatVM might need connection status
+    ChatVM --> UserMgr; %% To get user info for display
     ContactVM --> UserMgr;
 
+    %% Service Layer Dependencies %%
     MsgMgr --> DBMgr;
-    MsgMgr --> ConnMgr;
-    MsgMgr --> FileStore; %% For Media Messages
-    ConnMgr --> WebSocket;
-    UserMgr --> ApiClient;
+    MsgMgr --> ConnMgr; %% To send messages via WebSocket
+    MsgMgr --> ApiClient; %% Added: For media upload/download via API
+    MsgMgr --> FileStore; %% For saving media files
+    ConnMgr --> WebSocket; %% Manager controls the client
+    UserMgr --> ApiClient; %% For login, user profiles etc.
     UserMgr --> DBMgr;
     ConvMgr --> DBMgr;
+    ConvMgr --> ApiClient; %% Added: e.g., for creating/fetching conversations via API
     DBMgr --> DB;
     NotifMgr -- interacts with --> OS(iOS System: APNS);
 
+    %% Network Layer Backflow / Responses %%
+    WebSocket -- Received Data --> ConnMgr; %% Added: WebSocket pushes data up
+    ApiClient -- API Response --> UserMgr; %% Added: API client returns data
+    ApiClient -- API Response --> MsgMgr;  %% Added: e.g., media upload/download result
+    ApiClient -- API Response --> ConvMgr; %% Added: e.g., conversation list result
+
+    %% Push Notification Flow %%
+    NotifMgr -- Processes Push --> MsgMgr; %% Added: Push leads to message processing
+    NotifMgr -- Processes Push --> ConvMgr; %% Added: Push leads to conversation update
+
+    %% Network to Server Communication %%
     WebSocket -- Network Traffic --> Server(IM Server);
     ApiClient -- Network Traffic --> Server;
 
-    Service/Manager Layer -- Uses --> Models & Utils;
+    %% Core Layer Usage %%
+    Service/ManagerLayer -- Uses --> Models & Utils;
+    PresentationLayer -- Uses --> Models; %% ViewModels often use/transform Models
 ```
 
 **二、 关键技术点与注意事项**
