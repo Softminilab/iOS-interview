@@ -322,6 +322,48 @@ Core Data是iOS数据持久化的核心框架，涉及数据建模、关系处�
   - 适配器模式：适配不同接口，如第三方库适配。  
   - 策略模式：定义算法族，如排序策略切换。  
   - 装饰器模式：动态添加功能，如视图装饰。
+  
+- **架构模式: MVC, MVP, MVVM, VIPER, TCA 等比较**
+  
+- - **熟悉的主流 iOS 架构模式:**
+
+    - **MVC (Model-View-Controller):** 苹果官方经典模式。Model (数据), View (UI), Controller (协调者)。**问题:** Controller 易膨胀 (Massive View Controller)。
+
+    - **MVP (Model-View-Presenter):** Model (数据), View (UI, 被动接口), Presenter (处理逻辑，更新 View)。View 将事件传递给 Presenter，Presenter 处理后调用 View 接口更新。**优点:** 分离了 View 和 Presenter，Presenter 不依赖 UIKit，可测试性提高。**缺点:** Presenter 和 View 之间接口可能过多，可能产生大量回调或代理。
+
+    - **MVVM (Model-View-ViewModel):** Model (数据), View (UI, ViewController), ViewModel (视图模型，处理表示逻辑，暴露可供 View 绑定的数据)。View 通过数据绑定 (Data Binding) 响应 ViewModel 的变化。**优点:** 大幅减轻 ViewController 负担，ViewModel 可测试性高，数据绑定减少模板代码。**缺点:** 数据绑定可能有学习曲线，简单页面可能过度设计。**目前非常主流。**
+
+    - VIPER (View-Interactor-Presenter-Entity-Router):
+
+      更精细的分层。
+
+      - **View:** 显示界面，传递事件给 Presenter。
+      - **Interactor:** 包含业务逻辑，处理数据（通常与 Entity 交互），不依赖 UI。
+      - **Presenter:** 处理视图逻辑，从 Interactor 获取数据，格式化后交给 View 显示，响应 View 事件，调用 Router 导航。
+      - **Entity:** 数据模型对象，通常由 Interactor 管理。
+      - **Router:** 处理导航逻辑，负责界面跳转。
+      - **优点:** 职责非常单一，模块间高度解耦，可测试性极高。
+      - **缺点:** **类爆炸**，结构复杂，代码量大，对于中小型项目可能过度设计，开发效率较低。
+
+    - TCA (The Composable Architecture):
+
+       
+
+      由 Point-Free 团队推广的基于 Swift 的单向数据流架构。借鉴了 Redux 和 Elm 架构。
+
+      - **核心概念:** State (单一状态源), Action (用户或系统事件), Reducer (纯函数，根据 Action 和当前 State 计算新 State), Environment (依赖项容器), Store (管理状态、发送 Action、运行 Reducer)。
+      - **优点:** 强制单向数据流，状态变化可预测；强调纯函数和副作用分离，易于测试；内置依赖管理和组合能力；适用于 SwiftUI。
+      - **缺点:** 学习曲线陡峭，概念较多；可能需要编写较多模板代码；对于习惯传统 OOP/MVVM 的开发者需要思维转变。
+
+  - **比较优缺点和适用场景:**
+
+    | 模式      | 主要优点                                                 | 主要缺点                                   | 适用场景                                                     |
+    | --------- | -------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------------------ |
+    | **MVC**   | 简单直观，上手快                                         | Controller 易臃肿，耦合度高，测试困难      | 非常简单的页面，快速原型                                     |
+    | **MVP**   | 分离 V/P，P 可测试                                       | V/P 接口可能繁多，回调/代理复杂            | 需要提高可测试性，不希望 Controller 过重的场景               |
+    | **MVVM**  | VC 瘦身，VM 可测试，数据绑定简洁                         | 数据绑定有学习成本，简单页面可能过度设计   | **大多数现代 iOS 应用**，特别是配合 SwiftUI 或 Combine/RxSwift |
+    | **VIPER** | 职责单一，高度解耦，极高可测试性                         | **类数量多**，结构复杂，开发效率低         | 大型、复杂、需要长期维护、对测试要求极高的项目               |
+    | **TCA**   | 单向数据流可预测，测试性好，副作用管理清晰，适合 SwiftUI | 学习曲线陡，模板代码可能较多，思维方式不同 | 复杂状态管理，函数式编程爱好者，SwiftUI 项目                 |
 
 #### 应用生命周期
 
