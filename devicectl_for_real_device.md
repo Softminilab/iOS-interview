@@ -1,3 +1,5 @@
+# xcrun devicectl
+
 是的，`xcrun devicectl` **有明确的版本限制**。
 
 主要限制在于：
@@ -21,19 +23,43 @@
 如果您无法运行 `xcrun devicectl`，首先应该检查您的 Xcode 和 macOS 版本是否满足要求。
 
 
-# 1. 确保设备连接
 
+## 确保设备连接
+
+```Shell
 DEVICE=$(xcrun devicectl list devices | grep -m1 "iPhone" | awk '{print $1}')
+```
 
-# 2. 安装测试应用
+
+
+## 列举可用设备
+
+```Shell
+xcrun xctrace list devices
+
+LOG:
+== Devices ==
+0x2ab70001b1 (0B7F69DD-C968-5F1C-B0D1-5D6AD5998C69)
+ACE (18.1) (00008101-001E64211E11001E)
+
+== Simulators ==
+13 pro max  15.0 Simulator (15.0) (1EB69E0F-2373-4160-8536-95435B206945)
+Apple Watch SE (40mm) (2nd generation) Simulator (11.0) (335BB5A5-FEF1-4B92-B1FC-8A44FCF4897C)
+Apple Watch SE (40mm) (2nd generation) (9.0) (39A4F0FA-7155-4044-941A-81F6E175C7DC)
+```
+
+
+
+## 安装应用
+
+```Shell
 # xcrun devicectl device install app \
-  --device iPhone13 \
+  --device $DEVICE \
   Demo.app
 
+xcrun devicectl device install app --device ACE Demo.app
 
-----------------install----------------
-
-# xcrun devicectl device install app --device ACE Demo.app
+Log:
 15:54:18  Acquired tunnel connection to device.
 15:54:18  Enabling developer disk image services.
 15:54:18  Acquired usage assertion.
@@ -44,46 +70,62 @@ App installed:
 • launchServicesIdentifier: unknown
 • databaseUUID: 27DD41EA-8179-4339-AE25-26EFBEE080F6
 • databaseSequenceNumber: 42676
-• options:
-
-----------------list----------------
-
-# xcrun xctrace list devices
-== Devices ==
-0x2ab70001b1 (0B7F69DD-C968-5F1C-B0D1-5D6AD5998C69)
-ACE (18.1) (00008101-001E64211E11001E)
-
-== Simulators ==
-13 pro max  15.0 Simulator (15.0) (1EB69E0F-2373-4160-8536-95435B206945)
-Apple Watch SE (40mm) (2nd generation) Simulator (11.0) (335BB5A5-FEF1-4B92-B1FC-8A44FCF4897C)
-Apple Watch SE (40mm) (2nd generation) (9.0) (39A4F0FA-7155-4044-941A-81F6E175C7DC)
+```
 
 
-----------------uninstall----------------
+
+## 卸载应用
+
+```Shell
 xcrun devicectl device uninstall app --device ACE com.softminilab.qrcode.scan.demo.Demo
+
+LOG:
 16:06:09  Enabling developer disk image services.
 16:06:09  Acquired usage assertion.
 App uninstalled.
+```
 
 
-------------launch------------
 
-# xcrun devicectl device process launch --device ACE com.softminilab.qrcode.scan.demo.Demo
+## Launch app
+
+```Shell
+xcrun devicectl device process launch --device <uuid/name> <build.id>
+xcrun devicectl device process launch --device ACE com.softminilab.qrcode.scan.demo.Demo
+
+LOG:
 16:12:15  Enabling developer disk image services.
 16:12:15  Acquired usage assertion.
 Launched application with com.softminilab.qrcode.scan.demo.Demo bundle identifier.
+```
 
 
-------------current runing PID------------
-# xcrun devicectl device info processes --device ACE | grep 'Demo.app'
+
+## 获取PID
+
+```Shell
+xcrun devicectl device info processes --device ACE | grep '<Your app name>.app'
+xcrun devicectl device info processes --device ACE | grep 'Demo.app'
+
+LOG:
+pid xxxxx/xxx/xxx/Demo.app
+```
 
 
-------------Kill------------
-# xcrun devicectl device process terminate --device ACE --pid 3732
 
+## Terminate app
+
+```Shell
+xcrun devicectl device process terminate --device ACE --pid 3732
+
+LOG:
 16:34:47  Enabling developer disk image services.
 16:34:47  Acquired usage assertion.
 Sent signal to terminate process sent to pid 3732
+```
 
+
+
+## REF
 
 https://gist.github.com/insidegui/b570ec998b9e2aeb730f4e142f0593d1
